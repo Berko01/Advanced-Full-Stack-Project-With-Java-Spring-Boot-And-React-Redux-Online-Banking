@@ -142,7 +142,7 @@ export default function Dashboard() {
 
   const handleSaveAccount = (accountInfo) => {
     console.log("Yeni hesap bilgileri:", accountInfo);
-    // Hesap bilgilerini işleyin veya kaydedin
+    // Hesap bilgilerini işle
   };
 
   return (
@@ -232,7 +232,7 @@ export default function Dashboard() {
                     p: 2,
                     display: "flex",
                     flexDirection: "column",
-                    height: 240,
+                    height: 500,
                   }}
                 >
                   <Chart />

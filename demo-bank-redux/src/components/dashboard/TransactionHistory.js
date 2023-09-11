@@ -8,19 +8,34 @@ import Title from "./Title";
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import Button from "@mui/material/Button";
+import { bindActionCreators } from "redux";
+import * as accountActions from "../../redux/actions/accountActions";
 
 function TransactionHistory(props) {
   const [showAllAccounts, setShowAllAccounts] = useState(false);
-  useEffect(() => {
-    // transactHistory propu değiştiğinde buraya gelecek olan kodları ekleyin
-  }, [props.transactHistory]);
+  useEffect(() => {}, [props.transactHistory]);
 
   function dateFormatter(dateArray) {
     const year = dateArray[0];
     const month = dateArray[1];
     const day = dateArray[2];
+    const hour = dateArray[3];
+    const minute = dateArray[4];
+    const second = dateArray[5];
 
-    return year + " : " + month + " : " + day;
+    return (
+      year +
+      " : " +
+      month +
+      " : " +
+      day +
+      " " +
+      hour +
+      ":" +
+      minute +
+      ":" +
+      second
+    );
   }
 
   return (
@@ -41,7 +56,7 @@ function TransactionHistory(props) {
         </TableHead>
         <TableBody>
           {props.transactHistory
-            .slice(0, showAllAccounts ? props.transactHistory.length : 15)
+            .sort((a, b) => b.transaction_id - a.transaction_id)
             .map((history) => (
               <TableRow key={history.transaction_id}>
                 <TableCell>{history.transaction_id}</TableCell>
@@ -65,7 +80,10 @@ function TransactionHistory(props) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    actions: {},
+    getTransactionHistory: bindActionCreators(
+      accountActions.getTransactionHistory,
+      dispatch
+    ),
   };
 }
 

@@ -25,6 +25,13 @@ function AccountForm({
     transactionType: "", // Transaction Type seçim kutusu
     
   });
+  const [paymentInfo, setPaymentInfo] = useState({
+    beneficiary: "", // Transaction Type seçim kutusu
+    account_number: "", // Transaction Type seçim kutusu
+    reference: "", // Transaction Type seçim kutusu
+    payment_amount: "", // Transaction Type seçim kutusu
+    
+  })
 
   const postRequestToApi = async (apiUrl, jsonData) => {
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
@@ -55,10 +62,12 @@ function AccountForm({
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setAccountInfo({
-      ...accountInfo,
+    setPaymentInfo({
+      ...paymentInfo,
       [name]: value,
     });
+
+    console.log(paymentInfo)
   };
 
   const handleTransactionTypeChange = (event) => {
@@ -129,6 +138,25 @@ function AccountForm({
     const apiUrl = "http://127.0.0.1:8070/transact/transfer";
 
     postRequestToApi(apiUrl, jsonData);
+
+    actions.getAccounts();
+    actions.getTotalBalance();
+    actions.getTransactionHistory()
+
+    onSaveAccount(accountInfo);
+    onClose(); // Yan menüyü kapat
+  };
+
+  const handlePaymentTransaction = (event) => {
+    event.preventDefault();
+
+    const jsonData = {};
+
+    paymentInfo["account_id"] = currentAccount.account_id;
+
+    const apiUrl = "http://127.0.0.1:8070/transact/payment";
+
+    postRequestToApi(apiUrl, paymentInfo);
 
     actions.getAccounts();
     actions.getTotalBalance();
@@ -211,6 +239,7 @@ function AccountForm({
                 event.stopPropagation();
               }}
             />
+            
             <Button
               variant="contained"
               color="primary"
@@ -335,7 +364,7 @@ function AccountForm({
             <TextField
               readonly
               disabled
-              name="paymentId"
+              name="account_id"
               label="Account Id"
               value={currentAccount.account_id}
               onChange={handleInputChange}
@@ -349,8 +378,8 @@ function AccountForm({
               }}
             />
             <TextField
-              name="additionalTextField7"
-              label="Additional Text Field 7"
+              name="beneficiary"
+              label="Beneficiary"
               value={accountInfo.additionalTextField7}
               onChange={handleInputChange}
               fullWidth
@@ -362,6 +391,55 @@ function AccountForm({
                 event.stopPropagation();
               }}
             />
+                        <TextField
+              name="account_number"
+              label="Account Number"
+              value={accountInfo.additionalTextField7}
+              onChange={handleInputChange}
+              fullWidth
+              margin="normal"
+              onClick={(event) => {
+                event.stopPropagation();
+              }}
+              onKeyDown={(event) => {
+                event.stopPropagation();
+              }}
+            />
+                        <TextField
+              name="reference"
+              label="Reference"
+              value={accountInfo.additionalTextField7}
+              onChange={handleInputChange}
+              fullWidth
+              margin="normal"
+              onClick={(event) => {
+                event.stopPropagation();
+              }}
+              onKeyDown={(event) => {
+                event.stopPropagation();
+              }}
+            />
+                        <TextField
+              name="payment_amount"
+              label="Account Number"
+              value={accountInfo.additionalTextField7}
+              onChange={handleInputChange}
+              fullWidth
+              margin="normal"
+              onClick={(event) => {
+                event.stopPropagation();
+              }}
+              onKeyDown={(event) => {
+                event.stopPropagation();
+              }}
+            />            <Button
+            variant="contained"
+            color="primary"
+            sx={{ backgroundColor: "#F5BD52" }}
+            onClick={handlePaymentTransaction}
+          >
+            Transact
+          </Button>
             <img src="payment.jpg" alt="Deposit" style={{ marginTop: '100px', maxWidth: '100%', height: 'auto' }} />
           </>
         ) : null}
@@ -385,7 +463,6 @@ function mapDispatchToProps(dispatch) {
 function mapStateToProps(state) {
   return {
     currentAccount: state.changeAccountReducer,
-    accounts: state.accountListReducer,
     
   };
 }

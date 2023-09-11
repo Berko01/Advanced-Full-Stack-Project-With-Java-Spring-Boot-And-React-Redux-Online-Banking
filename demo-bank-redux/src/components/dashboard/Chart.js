@@ -1,139 +1,77 @@
-import * as React from "react";
-import { useTheme } from "@mui/material/styles";
+import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
 import {
   LineChart,
   Line,
   XAxis,
   YAxis,
-  Label,
+  CartesianGrid,
+  Tooltip,
+  Legend,
   ResponsiveContainer,
 } from "recharts";
-import Title from "./Title";
-import { useState, useEffect } from "react";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
 import * as accountActions from "../../redux/actions/accountActions";
 
-function dateFormatter(dateArray) {
-  const year = dateArray[0];
-  const month = dateArray[1];
-  const day = dateArray[2];
-
-  return [year + ":" + month + ":" + day];
-}
-
 function Chart(props) {
-  const [totalAccountRecord, setTotalAccountRecord] = useState([]);
-
-  const [createdAtRecord, setCreatedAtRecord] = useState([]);
-
-  const chartData = totalAccountRecord.map((total, index) => ({
-    time: createdAtRecord[index],
-    amount: total,
-  }));
-
-  function orderTransactionArray(array) {
-    let totalAccount = 0;
-    const createdAtRecord = [];
-    const totalAccountRecord = [];
-
-    array.forEach((item) => {
-      if (item.status === "failed" || item.transaction_type === "Transfer") return;
-
-      if (item.transaction_type === "deposit") {
-        totalAccount += item.amount;
-      } else {
-        totalAccount -= item.amount;
-      }
-
-      totalAccountRecord.push(totalAccount);
-      createdAtRecord.push(dateFormatter(item.created_at));
-    });
-
-    const lastNineAccountRecord = totalAccountRecord.slice(-9);
-    const lastNineCreatedAtRecord = createdAtRecord.slice(-9);
-
-    setTotalAccountRecord(lastNineAccountRecord );
-    setCreatedAtRecord(lastNineCreatedAtRecord);
-  }
-
-  const getAccountTransactionHistory = async () => {
-    orderTransactionArray(props.transactHistory);
-  };
+  const [chartData, setChartData] = useState([]);
 
   useEffect(() => {
-    // transactHistory propu değiştiğinde buraya gelecek olan kodları ekleyin
-    orderTransactionArray(props.transactHistory);
+    // Redux üzerinden verileri alın ve işleyin
+    const processData = () => {
+      const data = props.transactHistory
+        .filter(
+          (item) =>
+            item.status !== "failed" && item.transaction_type !== "Transfer"
+        )
+        .sort((a, b) => a.transaction_id - b.transaction_id) // Transaction Id'ye göre sırala
+        .map((item) => ({
+          time: dateFormatter(item.created_at),
+          amount: calculateTotalAmount(item),
+        }))
+        .slice(-9); // Sadece son 9 veriyi al
+
+      setChartData(data);
+    };
+
+    processData();
   }, [props.transactHistory]);
 
-  const theme = useTheme();
+  function dateFormatter(dateArray) {
+    const [year, month, day] = dateArray;
+    return `${month}-${day}`;
+  }
+
+  function calculateTotalAmount(item) {
+    return item.transaction_type === "deposit" ? item.amount : -item.amount;
+  }
 
   return (
-    <React.Fragment>
-      <Title>Transaction History Chart</Title>
-      <ResponsiveContainer>
-        <LineChart
-          data={chartData}
-          margin={{
-            top: 16,
-            right: 16,
-            bottom: 0,
-            left: 24,
-          }}
-        >
-          <XAxis
-            dataKey="time"
-            stroke={theme.palette.text.secondary}
-            style={theme.typography.body2}
-          />
-          <YAxis
-            stroke={theme.palette.text.secondary}
-            style={theme.typography.body2}
-          >
-            <Label
-              angle={270}
-              position="left"
-              style={{
-                textAnchor: "middle",
-                fill: theme.palette.text.primary,
-                ...theme.typography.body1,
-              }}
-            >
-              Sales ($)
-            </Label>
-          </YAxis>
-          <Line
-            isAnimationActive={false}
-            type="monotone"
-            dataKey="amount"
-            stroke={theme.palette.primary.main}
-            dot={false}
-          />
+    <div>
+      <h2>Transaction History Chart</h2>
+      <ResponsiveContainer width="100%" height={400}>
+        <LineChart data={chartData}>
+          <XAxis dataKey="time" />
+          <YAxis />
+          <CartesianGrid stroke="#ccc" />
+          <Tooltip />
+          <Legend />
+          <Line type="monotone" dataKey="amount" stroke="#8884d8" />
         </LineChart>
       </ResponsiveContainer>
-    </React.Fragment>
+    </div>
   );
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    actions: {
-      getAccounts: bindActionCreators(accountActions.getAccounts, dispatch),
-      changeAccount: bindActionCreators(accountActions.changeAccount, dispatch),
-      getTransactHistory: bindActionCreators(
-        accountActions.getTransactionHistory,
-        dispatch
-      ),
-    },
-  };
 }
 
 function mapStateToProps(state) {
   return {
-    currentAccount: state.changeAccountReducer,
-    accounts: state.accountListReducer,
     transactHistory: state.transactionHistoryReducer,
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Chart);
+export default connect(mapStateToProps)(Chart);
+
+
+
+
+
+

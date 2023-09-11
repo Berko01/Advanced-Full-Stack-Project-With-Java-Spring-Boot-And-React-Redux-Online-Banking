@@ -14,7 +14,6 @@ function AccountForm({ onSaveAccount, open = true, onClose, actions}) {
   const [accountInfo, setAccountInfo] = useState({
     accountName: "",
     accountType: "",
-    // Diğer hesap bilgileri
   });
 
   const handleInputChange = (event) => {
@@ -52,7 +51,7 @@ function AccountForm({ onSaveAccount, open = true, onClose, actions}) {
         alertify.success("New account added.");
       }
     } catch (error) {
-      // İstek başarısız olduğunda hata işlemlerini burada yapabilirsiniz
+      // İstek başarısız olduğunda hata 
       alertify.error("Something went wrong");
     }
 
@@ -73,7 +72,7 @@ function AccountForm({ onSaveAccount, open = true, onClose, actions}) {
     >
       <div
         style={{
-          width: "300px", // Yan menünün genişliğini ayarlayabilirsiniz
+          width: "300px", // Yan menünün genişliğini ayarla
           padding: "16px",
         }}
         role="presentation"
@@ -90,11 +89,11 @@ function AccountForm({ onSaveAccount, open = true, onClose, actions}) {
           fullWidth
           margin="normal"
           onClick={(event) => {
-            // Tıklama olayını engellemek için bu işlevi kullanın
+            // Tıklama olayını engelleme
             event.stopPropagation();
           }}
           onKeyDown={(event) => {
-            // Klavye olaylarını engellemek için bu işlevi kullanın
+            // Klavye olaylarını engelleme
             event.stopPropagation();
           }}
         />
@@ -106,15 +105,14 @@ function AccountForm({ onSaveAccount, open = true, onClose, actions}) {
           fullWidth
           margin="normal"
           onClick={(event) => {
-            // Tıklama olayını engellemek için bu işlevi kullanın
+            // Tıklama olayını engelleme
             event.stopPropagation();
           }}
           onKeyDown={(event) => {
-            // Klavye olaylarını engellemek için bu işlevi kullanın
+            // Klavye olaylarını engellemek
             event.stopPropagation();
           }}
         />
-        {/* Diğer hesap bilgileri için giriş alanları */}
         <Box mt={2}>
           <Button
             variant="contained"

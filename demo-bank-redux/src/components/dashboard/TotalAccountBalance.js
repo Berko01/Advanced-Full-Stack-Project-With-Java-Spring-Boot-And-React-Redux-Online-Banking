@@ -13,32 +13,12 @@ function preventDefault(event) {
 }
 
 function TotalAccountBalance(props) {
-  const [totalAccountBalance, setTotalAccountBalance] = useState("0");
   const [currentDate, setCurrentDate] = useState("");
-
-  const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-  const accessToken = userInfo.access_token;
 
   useEffect(() => {
     props.actions.getTotalBalance();
 
-    const apiUrl = "http://127.0.0.1:8070/app/dashboard";
-    axios
-      .get(apiUrl, {
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer: " + accessToken
-        },
-      })
-      .then((response) => {
-        setTotalAccountBalance(response.data.totalBalance);
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-
-    // Güncel tarihi oluşturun ve formatlayın
+    // Güncel tarih
     const now = new Date();
     const formattedDate = `${now.getDate()} ${now.toLocaleString('default', { month: 'long' })}, ${now.getFullYear()}`;
     setCurrentDate(formattedDate);
@@ -65,8 +45,6 @@ function TotalAccountBalance(props) {
 function mapDispatchToProps(dispatch) {
   return {
     actions: {
-      getAccounts: bindActionCreators(accountActions.getAccounts, dispatch),
-      changeAccount: bindActionCreators(accountActions.changeAccount, dispatch),
       getTotalBalance: bindActionCreators(accountActions.getTotalBalance, dispatch)
     },
   };
@@ -74,8 +52,6 @@ function mapDispatchToProps(dispatch) {
 
 function mapStateToProps(state) {
   return {
-    currentAccount: state.changeAccountReducer,
-    accounts: state.accountListReducer,
     totalBalance: state.totalBalanceReducer,
   };
 }

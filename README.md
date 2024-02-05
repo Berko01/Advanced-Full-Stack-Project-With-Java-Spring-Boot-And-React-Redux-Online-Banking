@@ -34,7 +34,7 @@ Feel free to ask if you have any further questions or need additional informatio
 
 ![Uygulama Ekran Görüntüsü](loginPage.png)
 
-![Uygulama Ekran Görüntüsü](ProjectPage1.png)
+![Uygulama Ekran Görüntüsü](ProjecPage1.png)
 
 ![Uygulama Ekran Görüntüsü](ProjectPage2.png)
 
